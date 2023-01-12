@@ -88,7 +88,7 @@ def scrap_articles():
     #options.add_argument("--disable-dev-shm-usage")
     #options.add_argument("--disable-gpu")
     #options.add_argument("--disable-features=NetworkService")
-    options.add_argument("--window-size=960x900")
+    #options.add_argument("--window-size=960x900")
     #options.add_argument("--disable-features=VizDisplayCompositor")
 
     url_partie_legi = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'
@@ -96,9 +96,9 @@ def scrap_articles():
 
 
     #instanciation du webdriver pour Chrome
-    driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/Downloads/chromedriver_win32 (1)", chrome_options=options)
+    #driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/Downloads/chromedriver_win32 (1)", chrome_options=options)
     #driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
-    #driver_legi = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
+    driver_legi = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
     driver_regl = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
 
     #Navigation des pages web pour trouver tous les articles 
