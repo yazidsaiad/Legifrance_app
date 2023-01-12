@@ -147,7 +147,6 @@ def scrap_articles():
     return df_id_text_articles
 
 
-
 '''
 def to_excel(df):
     output = BytesIO()
