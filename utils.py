@@ -3,6 +3,8 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from io import BytesIO
+from selenium.webdriver.chrome.options import Options
+
 #from pyxlsb import open_workbook as open_xlsb
 
 
@@ -80,13 +82,22 @@ def scrap_articles():
     #------#
 
     #instanciation de l'URL contenant l'arborescence des articles
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-features=NetworkService")
+    options.add_argument("--window-size=1920x1080")
+    options.add_argument("--disable-features=VizDisplayCompositor")
+
     url_partie_legi = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'
     url_partie_regl = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'
 
 
     #instanciation du webdriver pour Chrome
-    driver_legi = webdriver.Chrome(executable_path="chromedriver.exe")
-    driver_regl = webdriver.Chrome(executable_path="chromedriver.exe")
+    driver_legi = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
+    driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
     #driver_legi = webdriver.Chrome(ChromeDriverManager().install())
     #driver_regl = webdriver.Chrome(ChromeDriverManager().install())
 
@@ -117,7 +128,7 @@ def scrap_articles():
     #------#
 
     #Instanciation du navigateur web
-    driver = webdriver.Chrome(executable_path="chromedriver.exe")
+    driver = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
     #driver = webdriver.Chrome(ChromeDriverManager().install())
 
     #Creation des liens menant vers les pages contenant les articles
