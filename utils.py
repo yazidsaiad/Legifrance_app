@@ -96,9 +96,9 @@ def scrap_articles():
 
 
     #instanciation du webdriver pour Chrome
-    #driver_legi = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
+    driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/.wdm/drivers/chromedriver/win32/108.0.5359", options=options)
     #driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
-    driver_legi = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
+    #driver_legi = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
     driver_regl = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
 
     #Navigation des pages web pour trouver tous les articles 
