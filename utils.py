@@ -84,22 +84,22 @@ def scrap_articles():
     #instanciation de l'URL contenant l'arborescence des articles
     options = Options()
     options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-features=NetworkService")
-    options.add_argument("--window-size=1920x1080")
-    options.add_argument("--disable-features=VizDisplayCompositor")
+    #options.add_argument("--no-sandbox")
+    #options.add_argument("--disable-dev-shm-usage")
+    #options.add_argument("--disable-gpu")
+    #options.add_argument("--disable-features=NetworkService")
+    options.add_argument("--window-size=960x900")
+    #options.add_argument("--disable-features=VizDisplayCompositor")
 
     url_partie_legi = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'
     url_partie_regl = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'
 
 
     #instanciation du webdriver pour Chrome
-    driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/.wdm/drivers/chromedriver/win32/108.0.5359", options=options)
+    #driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/.wdm/drivers/chromedriver/win32/108.0.5359", options=options)
     #driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
-    #driver_legi = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
-    driver_regl = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
+    driver_legi = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
+    driver_regl = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
 
     #Navigation des pages web pour trouver tous les articles 
     driver_legi.get(url_partie_legi)
@@ -129,7 +129,7 @@ def scrap_articles():
 
     #Instanciation du navigateur web
     #driver = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
-    driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
+    driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
 
     #Creation des liens menant vers les pages contenant les articles
     LIENS_VERS_ARTICLES = []
