@@ -85,8 +85,10 @@ def scrap_articles():
 
 
     #instanciation du webdriver pour Chrome
-    driver_legi = webdriver.Chrome(ChromeDriverManager().install())
-    driver_regl = webdriver.Chrome(ChromeDriverManager().install())
+    driver_legi = webdriver.Chrome(executable_path="chromedriver.exe")
+    driver_regl = webdriver.Chrome(executable_path="chromedriver.exe")
+    #driver_legi = webdriver.Chrome(ChromeDriverManager().install())
+    #driver_regl = webdriver.Chrome(ChromeDriverManager().install())
 
     #Navigation des pages web pour trouver tous les articles 
     driver_legi.get(url_partie_legi)
@@ -115,7 +117,8 @@ def scrap_articles():
     #------#
 
     #Instanciation du navigateur web
-    driver = webdriver.Chrome(ChromeDriverManager().install())
+    driver = webdriver.Chrome(executable_path="chromedriver.exe")
+    #driver = webdriver.Chrome(ChromeDriverManager().install())
 
     #Creation des liens menant vers les pages contenant les articles
     LIENS_VERS_ARTICLES = []
