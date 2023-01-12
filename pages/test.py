@@ -1,20 +1,10 @@
+'''
 import pandas as pd
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
-'''
-list_id = ['id1', 'id2', 'id3']
-list_text = ['text1 ok', 'text1 ok modif', 'text3']
-
-test_dict = {
-    'id' : list_id,
-    'text' : list_text,
-}
-
-df_test = pd.DataFrame.from_dict(test_dict).set_index('id')
-
-'''
 
 #------#
 #PREMIERE PARTIE : STOCKAGE DES ID ET NOMS DES ARTICLES
@@ -26,8 +16,23 @@ url_partie_regl = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT00000
 
 
 #instanciation du webdriver pour Chrome
-driver_legi = webdriver.Chrome(ChromeDriverManager().install())
-driver_regl = webdriver.Chrome(ChromeDriverManager().install())
+options = Options()
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-gpu")
+options.add_argument("--disable-features=NetworkService")
+options.add_argument("--window-size=1920x1080")
+options.add_argument("--disable-features=VizDisplayCompositor")
+
+#driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/Downloads/chromedriver_win32 (1)", chrome_options=options)
+
+driver_legi = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
+driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
+
+
+#driver_legi = webdriver.Chrome(ChromeDriverManager().install())
+#driver_regl = webdriver.Chrome(ChromeDriverManager().install())
 
 #Navigation des pages web pour trouver tous les articles 
 driver_legi.get(url_partie_legi)
@@ -90,3 +95,4 @@ df_id_text_articles = pd.DataFrame.from_dict(dict_id_text_art).set_index('Identi
 df_id_name_articles = pd.DataFrame.from_dict(dict_art).set_index('Identifiant')
 
 
+'''
