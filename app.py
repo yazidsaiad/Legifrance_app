@@ -1,3 +1,6 @@
+"""
+This file allows you to run the project app.
+"""
 from multipage import MultiPage
 from pages import page_acceuil # import your page modules here
 
