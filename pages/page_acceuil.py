@@ -113,7 +113,7 @@ def app():
         list_supp = utils.difference(utils.union(base_list, new_list), new_list)
         st.markdown("⚠️ " + str(len(list_supp)) + " article(s) supprimé(s) depuis la dernière mise à jour :")
         st.dataframe(df_base_inventaire.loc[list_supp])
-
+        
         # deleted articles backup 
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
