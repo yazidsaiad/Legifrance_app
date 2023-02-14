@@ -1,5 +1,5 @@
 """
-This file is the framework for generating multiple Streamlit applications 
+This file is the framework for generating multiple Streamlit pages 
 through an object oriented framework. 
 """
 
