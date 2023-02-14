@@ -144,8 +144,16 @@ def app():
         for ref in list(df_base_inventaire['Référence']):
             if 'abrogé' in ref:
                 list_abroges_base.append(ref)
-    
+
         list_abroges = utils.difference(list_abroges_new, list_abroges_base)
+        '''
+        st.markdown("Liste des anciens articles abrogés :")
+        st.table(list_abroges_base)
+        st.markdown("Liste des nouveaux articles abrogés :")
+        st.table(list_abroges_new)
+        st.markdown("MAJ :")
+        st.table(list_abroges)
+        '''
         df_abroges = pd.DataFrame(list_abroges, columns = ['Articles Abrogés'])
         st.markdown("⚠️ " + str(len(list_abroges)) + " article(s) abrogé(s) depuis la dernière mise à jour :")
         st.dataframe(df_abroges)
