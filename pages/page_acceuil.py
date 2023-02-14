@@ -100,7 +100,7 @@ def app():
                 nb_modif += 1
         st.markdown("⚠️ " + str(nb_modif) + " article(s) modifié(s) depuis la dernière mise à jour :")
         st.dataframe(df_new_inventaire.loc[list_id_modif])
-        
+
         # modified articles backup
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
@@ -136,11 +136,17 @@ def app():
                                     file_name = 'inventaire_articles_ajoutés_' + str(dt_string) + '.xlsx')
 
         # count revoked articles
-        list_abroges = []
+        list_abroges_new = []
         for ref in list(df_new_inventaire['Référence']):
             if 'abrogé' in ref:
-                list_abroges.append(ref)
-        df_abroges = pd.DataFrame (list_abroges, columns = ['Articles Abrogés'])
+                list_abroges_new.append(ref)
+        list_abroges_base = []
+        for ref in list(df_base_inventaire['Référence']):
+            if 'abrogé' in ref:
+                list_abroges_base.append(ref)
+    
+        list_abroges = utils.difference(list_abroges_new, list_abroges_base)
+        df_abroges = pd.DataFrame(list_abroges, columns = ['Articles Abrogés'])
         st.markdown("⚠️ " + str(len(list_abroges)) + " article(s) abrogé(s) depuis la dernière mise à jour :")
         st.dataframe(df_abroges)
 
@@ -153,13 +159,3 @@ def app():
                                     file_name = 'références_articles_abrogés_' + str(dt_string) + '.xlsx')
 
         st.markdown("✅ Bilan terminé.")
-
-
-
-
-
-
-    
-
-
-
