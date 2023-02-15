@@ -23,8 +23,9 @@ def scrap_articles():
     options = Options()     # chrome options for the webdrivers
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
-    
+    options.add_argument('--no-sandbox')         
 
+    
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
 
