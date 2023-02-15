@@ -1,6 +1,7 @@
 import pandas as pd
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from io import BytesIO
 from selenium.webdriver.chrome.options import Options
@@ -34,8 +35,8 @@ def scrap_articles():
 
     #driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/Downloads/chromedriver_win32 (1)", chrome_options=options)
     #driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
-    driver_legi = webdriver.Chrome(ChromeDriverManager().install())     # webdriver instantiation for legislative part
-    driver_regl = webdriver.Chrome(ChromeDriverManager().install())     # webdriver instanciation for regulatory part
+    driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()))     # webdriver instantiation for legislative part
+    driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()))     # webdriver instanciation for regulatory part
 
     driver_legi.get(url_legi_part)
     ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
@@ -56,7 +57,7 @@ def scrap_articles():
     #SECOND PART : ARTICLE STORAGE
     #------#
 
-    driver = webdriver.Chrome(ChromeDriverManager().install())      # webdriver instantiation
+    driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))      # webdriver instantiation
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
     BASE_LINK = 'https://www.legifrance.gouv.fr/codes/article_lc/'      # basic link contained by all links to articles
