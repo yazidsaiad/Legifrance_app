@@ -5,7 +5,6 @@ This file contains the streamlit code of the project main page.
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-import time
 import utils
 
 
@@ -74,7 +73,7 @@ def app():
         df_base_inventaire = df_base_inventaire.set_index('Identifiant')
         st.dataframe(df_base_inventaire)
 
-    # load second artciles inventory
+    # load second articles inventory
     st.markdown(" ")
     st.markdown("💡 Veuillez charger un nouvel inventaire :")
     uploaded_file_new = st.file_uploader("Choisissez un nouveau fichier")
@@ -135,8 +134,8 @@ def app():
                                     data = df_to_save ,
                                     file_name = 'inventaire_articles_ajoutés_' + str(dt_string) + '.xlsx')
 
-        # count revoked articles
-        list_abroges_new = []
+        # count revoked articles 
+        list_abroges_new = []       
         for ref in list(df_new_inventaire['Référence']):
             if 'abrogé' in ref:
                 list_abroges_new.append(ref)
@@ -144,16 +143,7 @@ def app():
         for ref in list(df_base_inventaire['Référence']):
             if 'abrogé' in ref:
                 list_abroges_base.append(ref)
-
         list_abroges = utils.difference(list_abroges_new, list_abroges_base)
-        '''
-        st.markdown("Liste des anciens articles abrogés :")
-        st.table(list_abroges_base)
-        st.markdown("Liste des nouveaux articles abrogés :")
-        st.table(list_abroges_new)
-        st.markdown("MAJ :")
-        st.table(list_abroges)
-        '''
         df_abroges = pd.DataFrame(list_abroges, columns = ['Articles Abrogés'])
         st.markdown("⚠️ " + str(len(list_abroges)) + " article(s) abrogé(s) depuis la dernière mise à jour :")
         st.dataframe(df_abroges)
