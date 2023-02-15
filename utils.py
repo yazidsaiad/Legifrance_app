@@ -19,24 +19,19 @@ def scrap_articles():
     #FIRST PART : IDENTIFIERS AND ARTICLE NAMES STORAGE
     #------#
 
-    '''
+    
     options = Options()     # chrome options for the webdrivers
     options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument("--disable-features=NetworkService")
-    options.add_argument("--window-size=960x900")
-    options.add_argument("--disable-features=VizDisplayCompositor")
-    '''
+    
 
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
 
     #driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/Downloads/chromedriver_win32 (1)", chrome_options=options)
     #driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
-    driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()))     # webdriver instantiation for legislative part
-    driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()))     # webdriver instanciation for regulatory part
+    driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instantiation for legislative part
+    driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instanciation for regulatory part
 
     driver_legi.get(url_legi_part)
     ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
@@ -57,7 +52,7 @@ def scrap_articles():
     #SECOND PART : ARTICLE STORAGE
     #------#
 
-    driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))      # webdriver instantiation
+    driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)      # webdriver instantiation
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
     BASE_LINK = 'https://www.legifrance.gouv.fr/codes/article_lc/'      # basic link contained by all links to articles

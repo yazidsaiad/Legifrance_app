@@ -1,6 +1,6 @@
 streamlit==1.16.0
 pandas==1.5.1
-selenium==4.6.0
-webdriver_manager
+#selenium==4.6.0
+seleniumbase
 webdriver-manager==3.8.4
 openpyxl==3.0.10
