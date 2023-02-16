@@ -1,10 +1,10 @@
 import pandas as pd
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
+# from webdriver_manager.chrome import ChromeDriverManager
+# from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from io import BytesIO
-from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.options import Options
 
 def scrap_articles():
 
@@ -19,20 +19,24 @@ def scrap_articles():
     #FIRST PART : IDENTIFIERS AND ARTICLE NAMES STORAGE
     #------#
 
-    
+    '''
     options = Options()     # chrome options for the webdrivers
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument('--no-sandbox')         
-
+    
+    '''
     
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
 
-    #driver_legi = webdriver.Chrome(executable_path="C:/Users/ysaiad/Downloads/chromedriver_win32 (1)", chrome_options=options)
-    #driver_regl = webdriver.Chrome(executable_path="chromedriver.exe", options=options)
+    '''
     driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instantiation for legislative part
     driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instanciation for regulatory part
+    '''
+    driver_legi = webdriver.Firefox(executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+    driver_regl = webdriver.Firefox(executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+
 
     driver_legi.get(url_legi_part)
     ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
@@ -53,7 +57,9 @@ def scrap_articles():
     #SECOND PART : ARTICLE STORAGE
     #------#
 
-    driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)      # webdriver instantiation
+    # driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)      # webdriver instantiation
+    driver = webdriver.Firefox(executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
     BASE_LINK = 'https://www.legifrance.gouv.fr/codes/article_lc/'      # basic link contained by all links to articles
