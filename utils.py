@@ -1,5 +1,6 @@
 import pandas as pd
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 # from webdriver_manager.chrome import ChromeDriverManager
 # from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -34,8 +35,11 @@ def scrap_articles():
     driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instantiation for legislative part
     driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instanciation for regulatory part
     '''
-    driver_legi = webdriver.Firefox(executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
-    driver_regl = webdriver.Firefox(executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+    cap = DesiredCapabilities().FIREFOX
+    cap["marionette"] = False
+
+    driver_legi = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+    driver_regl = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
 
 
     driver_legi.get(url_legi_part)
@@ -58,7 +62,7 @@ def scrap_articles():
     #------#
 
     # driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)      # webdriver instantiation
-    driver = webdriver.Firefox(executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+    driver = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
 
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
