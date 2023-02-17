@@ -1,11 +1,11 @@
 import pandas as pd
 from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-# from webdriver_manager.chrome import ChromeDriverManager
-# from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from io import BytesIO
-# from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options
 
 def scrap_articles():
 
@@ -20,26 +20,31 @@ def scrap_articles():
     #FIRST PART : IDENTIFIERS AND ARTICLE NAMES STORAGE
     #------#
 
-    '''
+    
     options = Options()     # chrome options for the webdrivers
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
-    options.add_argument('--no-sandbox')         
+    options.add_argument('--no-sandbox')     
+    options.add_argument('--disable-dev-shm-usage')        
     
-    '''
     
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
 
-    '''
-    driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instantiation for legislative part
-    driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instanciation for regulatory part
-    '''
-    cap = DesiredCapabilities().FIREFOX
-    cap["marionette"] = False
+    
+    # driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instantiation for legislative part
+    # driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instanciation for regulatory part
+    
+    driver_legi = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instantiation for legislative part
+    driver_regl = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instanciation for regulatory part
 
-    driver_legi = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
-    driver_regl = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+
+    # FIREFOX VERSION
+    # cap = DesiredCapabilities().FIREFOX
+    # cap["marionette"] = False
+
+    # driver_legi = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+    # driver_regl = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
 
 
     driver_legi.get(url_legi_part)
@@ -62,7 +67,10 @@ def scrap_articles():
     #------#
 
     # driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)      # webdriver instantiation
-    driver = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
+
+    # FIREFOX VERSION
+    # driver = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
 
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
