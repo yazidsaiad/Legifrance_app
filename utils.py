@@ -3,6 +3,9 @@ from selenium import webdriver
 # from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 # from webdriver_manager.chrome import ChromeDriverManager
 # from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from io import BytesIO
 from selenium.webdriver.chrome.options import Options
@@ -80,11 +83,21 @@ def scrap_articles():
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
+    timeout = 5
     for k in range(0, len(ARTICLES_IDS)):
         driver.get(LINKS_TO_ARTICLES[k])
-        # article content storage  : one web page per article
-        ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
-        ARTICLES_TEXT.append(ARTICLE.text)
+
+        try:
+            element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
+            WebDriverWait(driver, timeout).until(element_present)
+            # article content storage  : one web page per article
+            ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
+            ARTICLES_TEXT.append(ARTICLE.text)
+            print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
+        except TimeoutException:
+            print("Timed out waiting for page to load")
+
+        
 
     driver.close()
 
