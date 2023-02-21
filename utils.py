@@ -82,6 +82,7 @@ def scrap_articles():
             # error printed if web page doesnt load
             print("⚠️ Timed out waiting for page to load")
             counter += 1
+            print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
             print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
         
 
