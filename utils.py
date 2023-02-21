@@ -1,8 +1,5 @@
 import pandas as pd
 from selenium import webdriver
-# from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-# from webdriver_manager.chrome import ChromeDriverManager
-# from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -33,21 +30,10 @@ def scrap_articles():
     
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
-
     
-    # driver_legi = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instantiation for legislative part
-    # driver_regl = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)     # webdriver instanciation for regulatory part
     
     driver_legi = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instantiation for legislative part
     driver_regl = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instanciation for regulatory part
-
-
-    # FIREFOX VERSION
-    # cap = DesiredCapabilities().FIREFOX
-    # cap["marionette"] = False
-
-    # driver_legi = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
-    # driver_regl = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
 
 
     driver_legi.get(url_legi_part)
@@ -69,11 +55,7 @@ def scrap_articles():
     #SECOND PART : ARTICLE STORAGE
     #------#
 
-    # driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options=options)      # webdriver instantiation
-    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
-
-    # FIREFOX VERSION
-    # driver = webdriver.Firefox(capabilities=cap, executable_path="Users/ysaiad/SNCF/Automatisation_Veille_Legifrance/geckodriver.exe")
+    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)      # webdriver instanciation
 
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
@@ -83,19 +65,21 @@ def scrap_articles():
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
-    timeout = 5
+    timeout = 10        # timeout set in order to wait for the web page loading 
     for k in range(0, len(ARTICLES_IDS)):
         driver.get(LINKS_TO_ARTICLES[k])
-
         try:
+            # presence of element is detected after the web page loads
             element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
             WebDriverWait(driver, timeout).until(element_present)
             # article content storage  : one web page per article
             ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
             ARTICLES_TEXT.append(ARTICLE.text)
             print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
+
         except TimeoutException:
-            print("Timed out waiting for page to load")
+            # error printed if web page doesnt load
+            print("⚠️ Timed out waiting for page to load")
 
         
 
