@@ -65,7 +65,7 @@ def scrap_articles():
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
-    timeout = 15        # timeout set in order to wait for the web page loading 
+    timeout = 30        # timeout set in order to wait for the web page loading 
     counter = 0
     for k in range(0, len(ARTICLES_IDS)):
         driver.get(LINKS_TO_ARTICLES[k])
