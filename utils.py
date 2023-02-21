@@ -65,7 +65,7 @@ def scrap_articles():
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
-    timeout = 10        # timeout set in order to wait for the web page loading 
+    timeout = 15        # timeout set in order to wait for the web page loading 
     counter = 0
     for k in range(0, len(ARTICLES_IDS)):
         driver.get(LINKS_TO_ARTICLES[k])
@@ -82,8 +82,7 @@ def scrap_articles():
             # error printed if web page doesnt load
             print("⚠️ Timed out waiting for page to load")
             counter += 1
-    
-    print("NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
+            print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
         
 
     driver.close()
