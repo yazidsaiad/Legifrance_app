@@ -67,7 +67,7 @@ def scrap_articles():
     ARTICLES_TEXT = []      # variable for articles content 
     timeout = 60        # timeout set in order to wait for the web page loading 
     counter = 0
-    for k in range(0, len(ARTICLES_IDS)):
+    for k in range(0, len(ARTICLES_IDS[:1000])):
         driver.get(LINKS_TO_ARTICLES[k])
         try:
             # presence of element is detected after the web page loads
@@ -76,7 +76,7 @@ def scrap_articles():
             # article content storage  : one web page per article
             ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
             ARTICLES_TEXT.append(ARTICLE.text)
-            print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
+            # print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
 
         except TimeoutException:
             # error printed if web page doesnt load
@@ -90,9 +90,9 @@ def scrap_articles():
 
     # dictionary of all information related to all articles
     articles_description = {
-        'Identifiant' : ARTICLES_IDS,
-        'Article' : ARTICLES_TEXT,
-        'Référence' : ARTICLES_NAMES
+        'Identifiant' : ARTICLES_IDS[:1000],
+        'Article' : ARTICLES_TEXT[:1000],
+        'Référence' : ARTICLES_NAMES[:1000]
     }
 
     df_articles_description = pd.DataFrame.from_dict(articles_description).set_index('Identifiant')
