@@ -67,7 +67,7 @@ def scrap_articles():
     ARTICLES_TEXT = []      # variable for articles content 
     timeout = 60        # timeout set in order to wait for the web page loading 
     counter = 0
-    for k in range(0, len(ARTICLES_IDS[:1000])):
+    for k in range(0, len(ARTICLES_IDS[:2000])):
         driver.get(LINKS_TO_ARTICLES[k])
         try:
             # presence of element is detected after the web page loads
@@ -90,9 +90,9 @@ def scrap_articles():
 
     # dictionary of all information related to all articles
     articles_description = {
-        'Identifiant' : ARTICLES_IDS[:1000],
-        'Article' : ARTICLES_TEXT[:1000],
-        'Référence' : ARTICLES_NAMES[:1000]
+        'Identifiant' : ARTICLES_IDS[:2000],
+        'Article' : ARTICLES_TEXT[:2000],
+        'Référence' : ARTICLES_NAMES[:2000]
     }
 
     df_articles_description = pd.DataFrame.from_dict(articles_description).set_index('Identifiant')
