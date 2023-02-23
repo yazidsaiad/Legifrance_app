@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from io import BytesIO
 from selenium.webdriver.chrome.options import Options
+import time
 
 def scrap_articles():
 
@@ -66,33 +67,40 @@ def scrap_articles():
 
     ARTICLES_TEXT = []      # variable for articles content 
     timeout = 60        # timeout set in order to wait for the web page loading 
-    counter = 0
-    for k in range(0, len(ARTICLES_IDS[:2000])):
-        driver.get(LINKS_TO_ARTICLES[k])
-        try:
-            # presence of element is detected after the web page loads
-            element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
-            WebDriverWait(driver, timeout).until(element_present)
-            # article content storage  : one web page per article
-            ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
-            ARTICLES_TEXT.append(ARTICLE.text)
-            # print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
+    counter = 0     # counter for the number of pages that can't load
+    chuncked_ids = list()       # list of articles ids divided in small subsets
+    batch_size = 100        # length of each subsets of chuncked_ids list
 
-        except TimeoutException:
-            # error printed if web page doesnt load
-            print("⚠️ Timed out waiting for page to load")
-            counter += 1
-            print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
-            print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
-        
+    for k in range(0, len(ARTICLES_IDS), batch_size):
+        chuncked_ids.append(ARTICLES_IDS[k:k+batch_size])
+
+    for i in range(0, len(chuncked_ids)):
+        for k in range(0, len(chuncked_ids[i])):
+            driver.get(LINKS_TO_ARTICLES[k])
+            try:
+                # presence of element is detected after the web page loads
+                element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
+                WebDriverWait(driver, timeout).until(element_present)
+                # article content storage  : one web page per article
+                ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
+                ARTICLES_TEXT.append(ARTICLE.text)
+                # print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
+            except TimeoutException:
+                # error printed if web page doesnt load
+                print("⚠️ Timed out waiting for page to load")
+                counter += 1
+                print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
+                print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
+        time.sleep(5)
+            
 
     driver.close()
 
     # dictionary of all information related to all articles
     articles_description = {
-        'Identifiant' : ARTICLES_IDS[:2000],
-        'Article' : ARTICLES_TEXT[:2000],
-        'Référence' : ARTICLES_NAMES[:2000]
+        'Identifiant' : ARTICLES_IDS,
+        'Article' : ARTICLES_TEXT,
+        'Référence' : ARTICLES_NAMES
     }
 
     df_articles_description = pd.DataFrame.from_dict(articles_description).set_index('Identifiant')
