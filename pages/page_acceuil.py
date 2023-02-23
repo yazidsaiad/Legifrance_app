@@ -43,10 +43,10 @@ def app():
 
     if inventaire is True:
         # artciles inventory
-        st.markdown("❗️ Cette étape prend un certain temps. Afin d'optimiser le temps de calcul, branchez votre ordinateur sur un secteur et limitez le nombre d'applications ouvertes simultanément.")
-        st.markdown("⌛ Inventaire des articles en cours...")
+        st.info("❗️ Cette étape prend un certain temps. Afin d'optimiser le temps de calcul, branchez votre ordinateur sur un secteur et limitez le nombre d'applications ouvertes simultanément.")
+        st.info("⌛ Inventaire des articles en cours...")
         df_articles_description = utils.scrap_articles()
-        st.markdown("✅ Inventaire des articles terminé.")
+        st.success("✅ Inventaire des articles terminé.")
 
         # artciles backup 
         now = datetime.now()
@@ -110,7 +110,7 @@ def app():
 
         # count deleted articles
         list_supp = utils.difference(utils.union(base_list, new_list), new_list)
-        st.markdown("⚠️ " + str(len(list_supp)) + " article(s) supprimé(s) depuis la dernière mise à jour :")
+        st.info("⚠️ " + str(len(list_supp)) + " article(s) supprimé(s) depuis la dernière mise à jour :")
         st.dataframe(df_base_inventaire.loc[list_supp])
         
         # deleted articles backup 
@@ -123,7 +123,7 @@ def app():
 
         # count new articles
         list_add = utils.difference(utils.union(base_list, new_list), base_list)
-        st.markdown("⚠️ " + str(len(list_add)) + " article(s) ajouté(s) depuis la dernière mise à jour :")
+        st.info("⚠️ " + str(len(list_add)) + " article(s) ajouté(s) depuis la dernière mise à jour :")
         st.dataframe(df_new_inventaire.loc[list_add])
 
         # new artciles backup
@@ -145,7 +145,7 @@ def app():
                 list_abroges_base.append(ref)
         list_abroges = utils.difference(list_abroges_new, list_abroges_base)
         df_abroges = pd.DataFrame(list_abroges, columns = ['Articles Abrogés'])
-        st.markdown("⚠️ " + str(len(list_abroges)) + " article(s) abrogé(s) depuis la dernière mise à jour :")
+        st.info("⚠️ " + str(len(list_abroges)) + " article(s) abrogé(s) depuis la dernière mise à jour :")
         st.dataframe(df_abroges)
 
         # revoked articles backup 
@@ -156,4 +156,4 @@ def app():
                                     data = df_to_save ,
                                     file_name = 'références_articles_abrogés_' + str(dt_string) + '.xlsx')
 
-        st.markdown("✅ Bilan terminé.")
+        st.success("✅ Bilan terminé.")

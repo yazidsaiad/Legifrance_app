@@ -56,7 +56,7 @@ def scrap_articles():
     #SECOND PART : ARTICLE STORAGE
     #------#
 
-    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)      # webdriver instanciation
+    # driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)      # webdriver instanciation
 
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
@@ -75,6 +75,7 @@ def scrap_articles():
         chuncked_ids.append(ARTICLES_IDS[k:k+batch_size])
 
     for i in range(0, len(chuncked_ids)):
+        driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)      # webdriver instanciation
         for k in range(0, len(chuncked_ids[i])):
             driver.get(LINKS_TO_ARTICLES[k])
             try:
@@ -91,10 +92,11 @@ def scrap_articles():
                 counter += 1
                 print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
                 print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
+        driver.close()
         time.sleep(5)
             
 
-    driver.close()
+    # driver.close()
 
     # dictionary of all information related to all articles
     articles_description = {
