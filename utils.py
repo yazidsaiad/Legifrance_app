@@ -8,7 +8,7 @@ from io import BytesIO
 from selenium.webdriver.chrome.options import Options
 import time
 
-def scrap_articles():
+def get_links():
 
     """
     Allow the legislative and regulatory texts scraping on Légifrance website.
@@ -51,13 +51,23 @@ def scrap_articles():
 
     driver_legi.close()
     driver_regl.close()
+
+    return ARTICLES_IDS, ARTICLES_NAMES
+
+def get_articles(ids : list, names : list):
     
+    options = Options()     # chrome options for the webdrivers
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument('--no-sandbox')     
+    options.add_argument('--disable-dev-shm-usage')    
+
     #------#
-    #SECOND PART : ARTICLE STORAGE
+    # ARTICLE STORAGE
     #------#
 
-    # driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)      # webdriver instanciation
-
+    ARTICLES_IDS = ids
+    ARTICLES_NAMES = names
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
     BASE_LINK = 'https://www.legifrance.gouv.fr/codes/article_lc/'      # basic link contained by all links to articles
@@ -66,18 +76,21 @@ def scrap_articles():
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
-    timeout = 60        # timeout set in order to wait for the web page loading 
+    timeout = 90        # timeout set in order to wait for the web page loading 
     counter = 0     # counter for the number of pages that can't load
     chuncked_ids = list()       # list of articles ids divided in small subsets
-    batch_size = 100        # length of each subsets of chuncked_ids list
+    batch_size = 50        # length of each subsets of chuncked_ids list
 
     for k in range(0, len(ARTICLES_IDS), batch_size):
         chuncked_ids.append(ARTICLES_IDS[k:k+batch_size])
 
     for i in range(0, len(chuncked_ids)):
-        driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)      # webdriver instanciation
-        for k in range(0, len(chuncked_ids[i])):
-            driver.get(LINKS_TO_ARTICLES[k])
+
+        # webdriver instanciation for each batch
+        driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
+        
+        for k in range(0, len(chuncked_ids[i])):        # batch number i
+            driver.get(LINKS_TO_ARTICLES[i*batch_size + k])
             try:
                 # presence of element is detected after the web page loads
                 element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
@@ -155,6 +168,26 @@ def difference(lst1, lst2):
     s = set(lst2)
     lst_diff = [x for x in lst1 if x not in s]
     return lst_diff
+
+def detect_modification(df_old : pd.DataFrame, df_new : pd.DataFrame):
+    df_old_ = df_old.set_index('Identifiant')
+    df_new_ = df_new.set_index('Identifiant')
+    old_list = list(df_old_.index)       # list of ids in old inventory
+    new_list = list(df_new_.index)       # list of ids in new inventory
+
+    # count modified articles
+    list_intersection = intersection(old_list, new_list)
+    nb_modif = 0
+    list_id_modif = []
+    for id in list_intersection:
+            df_modif = df_new_.loc[df_new_['Article'] != df_old_['Article']]
+            list_id_modif.append(id)
+            nb_modif += 1
+    
+    return df_modif
+    
+
+
 
 
 

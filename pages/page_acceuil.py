@@ -45,7 +45,9 @@ def app():
         # artciles inventory
         st.info("❗️ Cette étape prend un certain temps. Afin d'optimiser le temps de calcul, branchez votre ordinateur sur un secteur et limitez le nombre d'applications ouvertes simultanément.")
         st.info("⌛ Inventaire des articles en cours...")
-        df_articles_description = utils.scrap_articles()
+        st.info("Ceci est un test.")
+        ids, names = utils.get_links()
+        df_articles_description = utils.get_articles(ids, names)
         st.success("✅ Inventaire des articles terminé.")
 
         # artciles backup 
