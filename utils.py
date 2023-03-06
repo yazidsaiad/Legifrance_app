@@ -76,7 +76,7 @@ def get_articles(ids : list, names : list):
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
-    timeout = 90        # timeout set in order to wait for the web page loading 
+    timeout = 30        # timeout set in order to wait for the web page loading 
     counter = 0     # counter for the number of pages that can't load
     chuncked_ids = list()       # list of articles ids divided in small subsets
     batch_size = 50        # length of each subsets of chuncked_ids list
@@ -106,7 +106,7 @@ def get_articles(ids : list, names : list):
                 print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
                 print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
         driver.close()
-        time.sleep(5)
+        time.sleep(2)
             
 
     # driver.close()
