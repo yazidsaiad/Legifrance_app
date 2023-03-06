@@ -76,10 +76,10 @@ def get_articles(ids : list, names : list):
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
-    timeout = 30        # timeout set in order to wait for the web page loading 
+    timeout = 90        # timeout set in order to wait for the web page loading 
     counter = 0     # counter for the number of pages that can't load
     chuncked_ids = list()       # list of articles ids divided in small subsets
-    batch_size = 50        # length of each subsets of chuncked_ids list
+    batch_size = 20        # length of each subsets of chuncked_ids list
 
     for k in range(0, len(ARTICLES_IDS), batch_size):
         chuncked_ids.append(ARTICLES_IDS[k:k+batch_size])
