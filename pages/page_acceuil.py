@@ -63,9 +63,9 @@ def app():
         articles_text = []
         progress_ = 0
         for batch in chuncked_ids:
-            text_ = utils.get_articles(batch, timeout=utils.TIMEOUT)
+            text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
             articles_text.append(text_)
-            progress_ += len(batch)
+            progress_ += (len(batch) - len(unloaded_ids))
             text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
 
 
@@ -73,9 +73,16 @@ def app():
         for text_ in articles_text:
             for k in text_:
                 all_texts.append(k)
+        
+        # unloaded articles
+        ids_string = str()
+        for id in unloaded_ids:
+            ids_string += str(id)
+            ids_string += " "
 
         df_articles_description = utils.get_inventory_description(ids=ids, text=all_texts, names=names)
         st.success("Inventaire des articles terminé.")
+        st.warning(str(len(unloaded_ids)) + " n'ont pas être chargé(s). Leur identifiant sont : " + ids_string)
 
         # artciles backup 
         now = datetime.now()
@@ -116,7 +123,7 @@ def app():
     new_list = list(df_new_inventaire.index)
     
     if st.button("EFFECTUER L'INVENTAIRE DES MODIFICATIONS"):
-        st.markdown("⌛ Bilan en cours...")
+        st.info("Bilan en cours...")
         
         # count modified articles
         list_intersection = utils.intersection(base_list, new_list)
@@ -126,7 +133,7 @@ def app():
             if list(df_base_inventaire.loc[id])[0] != list(df_new_inventaire.loc[id])[0]:
                 list_id_modif.append(id)
                 nb_modif += 1
-        st.markdown("⚠️ " + str(nb_modif) + " article(s) modifié(s) depuis la dernière mise à jour :")
+        st.info("⚠️ " + str(nb_modif) + " article(s) modifié(s) depuis la dernière mise à jour :")
         st.dataframe(df_new_inventaire.loc[list_id_modif])
 
         # modified articles backup
@@ -185,4 +192,4 @@ def app():
                                     data = df_to_save ,
                                     file_name = 'références_articles_abrogés_' + str(dt_string) + '.xlsx')
 
-        st.success("✅ Bilan terminé.")
+        st.success("Bilan terminé.")

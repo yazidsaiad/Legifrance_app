@@ -101,6 +101,7 @@ def get_articles(ids : list, timeout : int):
 
     ARTICLES_TEXT = []      # variable for articles content 
     counter = 0     # counter for the number of pages that can't load
+    IDS_UNLOADED = []
     
     # webdriver instanciation for each batch
     driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
@@ -121,9 +122,11 @@ def get_articles(ids : list, timeout : int):
             counter += 1
             print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
             print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
+            IDS_UNLOADED.append(ARTICLES_IDS[k])
+            ARTICLES_TEXT.append("ERREUR DE CHARGEMENT DE L'ARTCILE")
     driver.close()
     
-    return ARTICLES_TEXT
+    return ARTICLES_TEXT, IDS_UNLOADED
 
 def get_inventory_description(ids : list, text : list, names : list):
     """
