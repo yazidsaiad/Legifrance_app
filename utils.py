@@ -55,21 +55,29 @@ def get_ids_and_names():
 
 
     driver_legi.get(url_legi_part)
-    ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
+    ARTICLES_LEGI = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
 
     driver_regl.get(url_regu_part)
-    ARTICLES += driver_regl.find_elements(By.CLASS_NAME, "name-article")       # add all articles information of regulatory part in ARTICLES variable      
+    ARTICLES_REGU = driver_regl.find_elements(By.CLASS_NAME, "name-article")       # add all articles information of regulatory part in ARTICLES variable      
 
-    ARTICLES_IDS = []
-    ARTICLES_NAMES = []
-    for ids in ARTICLES:
-        ARTICLES_IDS.append(ids.get_attribute('data-anchor'))
-        ARTICLES_NAMES.append(ids.text)
+    IDS_LEGI = []
+    NAMES_LEGI = []
+    for ids in ARTICLES_LEGI:
+        IDS_LEGI.append(ids.get_attribute('data-anchor'))
+        NAMES_LEGI.append(ids.text)
+    
+    IDS_REGU = []
+    NAMES_REGU = []
+    for ids in ARTICLES_REGU:
+        IDS_REGU.append(ids.get_attribute('data-anchor'))
+        NAMES_REGU.append(ids.text)
 
     driver_legi.close()
     driver_regl.close()
 
-    return ARTICLES_IDS, ARTICLES_NAMES
+    NAMES = NAMES_LEGI + NAMES_REGU
+
+    return IDS_LEGI, IDS_REGU, NAMES_LEGI, NAMES_REGU
 
 def get_articles(ids : list, timeout : int):
     """

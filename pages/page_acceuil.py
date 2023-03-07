@@ -41,19 +41,20 @@ def app():
     st.header("INVENTAIRE DES ARTICLES")
     st.markdown("💡 Téléchargez l'inventaire des articles répertoriés sur Légifrance à cette date.")
     df_articles_description = pd.DataFrame()
-    inventaire = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES")
+    inventaire_legi = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES DE LA PARTIE LEGISLATIVE")
+    inventaire_regu = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES DE LA PARTIE REGLEMENTAIRE")
 
-    if inventaire is True:
+    if inventaire_legi is True:
         # artciles inventory
         st.info("Cette opération prend un certain temps. Afin d'optimiser le temps de calcul, branchez votre ordinateur sur un secteur et limitez le nombre d'applications ouvertes simultanément.")
         
         # get ids and names 
         st.info("Récupération des identifiants des articles... ")
-        ids, names = utils.get_ids_and_names()
+        ids_legi, _ , names_legi, _ = utils.get_ids_and_names()
         st.success("Récupération des identifiants terminée. ")
         
         # chuncked versions of lists
-        chuncked_ids = utils.chunck_list(ids, batch_size=utils.BATCH_SIZE)
+        chuncked_ids = utils.chunck_list(ids_legi, batch_size=utils.BATCH_SIZE)
 
         # show progress of scraping
         progress_text = "Inventaire des articles en cours. "
@@ -66,7 +67,7 @@ def app():
             text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
             articles_text.append(text_)
             progress_ += (len(batch) - len(unloaded_ids))
-            text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
+            text_bar.progress(progress_/len(ids_legi), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_legi)) + ".")
             time.sleep(5)
 
         all_texts = []
@@ -80,7 +81,7 @@ def app():
             ids_string += str(id)
             ids_string += " "
 
-        df_articles_description = utils.get_inventory_description(ids=ids, text=all_texts, names=names)
+        df_articles_description = utils.get_inventory_description(ids=ids_legi, text=all_texts, names=names_legi)
         st.success("Inventaire des articles terminé.")
         st.warning(str(len(unloaded_ids)) + " n'ont pas être chargé(s). Leur identifiant sont : " + ids_string)
 
