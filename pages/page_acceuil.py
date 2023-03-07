@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import utils
+import time
 
 
 def app():
@@ -36,6 +37,7 @@ def app():
     # INVENTORY PART 
     #--------#
 
+
     st.header("INVENTAIRE DES ARTICLES")
     st.markdown("💡 Téléchargez l'inventaire des articles répertoriés sur Légifrance à cette date.")
     df_articles_description = pd.DataFrame()
@@ -43,12 +45,37 @@ def app():
 
     if inventaire is True:
         # artciles inventory
-        st.info("❗️ Cette étape prend un certain temps. Afin d'optimiser le temps de calcul, branchez votre ordinateur sur un secteur et limitez le nombre d'applications ouvertes simultanément.")
-        st.info("⌛ Inventaire des articles en cours...")
-        st.info("Ceci est un test.")
-        ids, names = utils.get_links()
-        df_articles_description = utils.get_articles(ids, names)
-        st.success("✅ Inventaire des articles terminé.")
+        st.info("Cette opération prend un certain temps. Afin d'optimiser le temps de calcul, branchez votre ordinateur sur un secteur et limitez le nombre d'applications ouvertes simultanément.")
+        
+        # get ids and names 
+        st.info("Récupération des identifiants des articles... ")
+        ids, names = utils.get_ids_and_names()
+        st.success("Récupération des identifiants terminée. ")
+        
+        # chuncked versions of lists
+        chuncked_ids = utils.chunck_list(ids, batch_size=utils.BATCH_SIZE)
+
+        # show progress of scraping
+        progress_text = "Inventaire des articles en cours. "
+        text_bar = st.progress(0, progress_text)
+
+        # text storage
+        articles_text = []
+        progress_ = 0
+        for batch in chuncked_ids:
+            text_ = utils.get_articles(batch, timeout=utils.TIMEOUT)
+            articles_text.append(text_)
+            progress_ += len(batch)
+            text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
+
+
+        all_texts = []
+        for text_ in articles_text:
+            for k in text_:
+                all_texts.append(k)
+
+        df_articles_description = utils.get_inventory_description(ids=ids, text=all_texts, names=names)
+        st.success("Inventaire des articles terminé.")
 
         # artciles backup 
         now = datetime.now()

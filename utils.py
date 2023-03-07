@@ -8,17 +8,34 @@ from io import BytesIO
 from selenium.webdriver.chrome.options import Options
 import time
 
-def get_links():
+BATCH_SIZE = 50
+TIMEOUT = 90
+
+def chunck_list(list_ : list, batch_size : int):
+    """
+    This function subdivides a list in small sets.
+
+    Keyword arguments : 
+    - list
+    - batch_size : length of each set.
+    """
+    chuncked_list = list()
+    for k in range(0, len(list_), batch_size):
+        chuncked_list.append(list_[k:k+batch_size])
+
+    return chuncked_list
+
+def get_ids_and_names():
 
     """
     Allow the legislative and regulatory texts scraping on Légifrance website.
 
     This function takes no keyword arguments.
 
-    This function returns a dataframe containing the law articles with names and identifiers.
+    This function returns two lists containing the law articles names and identifiers.
     """
     #------#
-    #FIRST PART : IDENTIFIERS AND ARTICLE NAMES STORAGE
+    # IDENTIFIERS AND ARTICLE NAMES STORAGE
     #------#
 
     
@@ -54,8 +71,16 @@ def get_links():
 
     return ARTICLES_IDS, ARTICLES_NAMES
 
-def get_articles(ids : list, names : list):
-    
+def get_articles(ids : list, timeout : int):
+    """
+    Allow the legislative and regulatory texts scraping on Légifrance website.
+
+    Keyword arguments :
+    - list of articles ids
+    - list of articles names.
+
+    This function returns a dataframe containing the law articles with names and identifiers.
+    """
     options = Options()     # chrome options for the webdrivers
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
@@ -67,7 +92,6 @@ def get_articles(ids : list, names : list):
     #------#
 
     ARTICLES_IDS = ids
-    ARTICLES_NAMES = names
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
     BASE_LINK = 'https://www.legifrance.gouv.fr/codes/article_lc/'      # basic link contained by all links to articles
@@ -76,50 +100,43 @@ def get_articles(ids : list, names : list):
         LINKS_TO_ARTICLES.append(link)      # article links storage
 
     ARTICLES_TEXT = []      # variable for articles content 
-    timeout = 90        # timeout set in order to wait for the web page loading 
     counter = 0     # counter for the number of pages that can't load
-    chuncked_ids = list()       # list of articles ids divided in small subsets
-    batch_size = 20        # length of each subsets of chuncked_ids list
+    
+    # webdriver instanciation for each batch
+    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
+    
+    for k in range(0, len(ids)):        
+        driver.get(LINKS_TO_ARTICLES[k])
+        try:
+            # presence of element is detected after the web page loads
+            element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
+            WebDriverWait(driver, timeout).until(element_present)
+            # article content storage  : one web page per article
+            ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
+            ARTICLES_TEXT.append(ARTICLE.text)
+            # print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
+        except TimeoutException:
+            # error printed if web page doesnt load
+            print("⚠️ Timed out waiting for page to load")
+            counter += 1
+            print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
+            print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
+    driver.close()
+    
+    return ARTICLES_TEXT
 
-    for k in range(0, len(ARTICLES_IDS), batch_size):
-        chuncked_ids.append(ARTICLES_IDS[k:k+batch_size])
+def get_inventory_description(ids : list, text : list, names : list):
+    """
+    This function constructs a pandas dataframe containing all information related to articles.
 
-    for i in range(0, len(chuncked_ids)):
-
-        # webdriver instanciation for each batch
-        driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
-        
-        for k in range(0, len(chuncked_ids[i])):        # batch number i
-            driver.get(LINKS_TO_ARTICLES[i*batch_size + k])
-            try:
-                # presence of element is detected after the web page loads
-                element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
-                WebDriverWait(driver, timeout).until(element_present)
-                # article content storage  : one web page per article
-                ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
-                ARTICLES_TEXT.append(ARTICLE.text)
-                # print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
-            except TimeoutException:
-                # error printed if web page doesnt load
-                print("⚠️ Timed out waiting for page to load")
-                counter += 1
-                print("❗️ ARTICLE NON CHARGE : " + str(ARTICLES_IDS[k]))
-                print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
-        driver.close()
-        time.sleep(2)
-            
-
-    # driver.close()
-
-    # dictionary of all information related to all articles
+    Keyword argument : 3 lists of the ids, content and names of articles.
+    """
     articles_description = {
-        'Identifiant' : ARTICLES_IDS,
-        'Article' : ARTICLES_TEXT,
-        'Référence' : ARTICLES_NAMES
+        'Identifiant' : ids,
+        'Article' : text,
+        'Référence' : names
     }
-
     df_articles_description = pd.DataFrame.from_dict(articles_description).set_index('Identifiant')
-
     return df_articles_description
 
 
