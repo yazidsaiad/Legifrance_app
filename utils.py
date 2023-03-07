@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 
 BATCH_SIZE = 50
-TIMEOUT = 90
+TIMEOUT = 5
 
 def chunck_list(list_ : list, batch_size : int):
     """
