@@ -67,7 +67,7 @@ def app():
             articles_text.append(text_)
             progress_ += (len(batch) - len(unloaded_ids))
             text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
-
+            time.sleep(5)
 
         all_texts = []
         for text_ in articles_text:

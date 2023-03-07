@@ -8,7 +8,7 @@ from io import BytesIO
 from selenium.webdriver.chrome.options import Options
 import time
 
-BATCH_SIZE = 50
+BATCH_SIZE = 100
 TIMEOUT = 5
 
 def chunck_list(list_ : list, batch_size : int):
