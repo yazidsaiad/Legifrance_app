@@ -71,10 +71,9 @@ def get_ids_and_names():
     driver_legi.close()
     driver_regl.close()
 
-
     return IDS, NAMES
 
-@st.cache_data
+
 def get_articles(ids : list, timeout : int):
     """
     Allow the legislative and regulatory texts scraping on Légifrance website.

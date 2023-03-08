@@ -6,7 +6,6 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import utils
-import time
 
 
 def app():
@@ -36,20 +35,33 @@ def app():
     #--------#
     # INVENTORY PART 
     #--------#
-
+    """
+    test = []
+    b1 = st.button('toto')
+    b2 = st.button('tata')
+    if b1 is True:
+        test.append("toto")
+        st.experimental_set_query_params(my_saved_result=test)
+    app_state = st.experimental_get_query_params()  
+    if b2 is True:
+        test = app_state["my_saved_result"]
+        #st.markdown(test)
+        test.append("tata")
+        
+    st.markdown(test)
+    """
 
     st.header("INVENTAIRE DES ARTICLES")
     st.info("Afin d'optimier les ressources mémoires utilisées, l'inventaire des inventaire des articles sur Légifrance \
             doit être effectué en deux parties.", icon="ℹ️")
     
     df_articles_description = pd.DataFrame()
-    col5, col6 = st.columns(2)
-    with col5:
-        st.info("Effectuez la première partie de l'inventaire des articles :", icon="💡")
-        inventaire_legi = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 1/2")
-    with col6:
-        st.info("Effectuez la deuxième partie de l'inventaire des articles :", icon="💡")
-        inventaire_regu = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 2/2")
+    articles_text = []
+
+
+    
+    st.info("Effectuez la première partie de l'inventaire des articles :", icon="💡")
+    inventaire_legi = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 1/2")
 
     if inventaire_legi is True:
         # artciles inventory        
@@ -59,53 +71,41 @@ def app():
         st.success("Récupération des identifiants terminée. ")
 
         # cut ids list and names into half
-        #ids_left = ids[:int(len(ids)/2)]
+        ids_left = ids[:int(len(ids)/2)]
         #names_left = names[:int(len(names)/2)]
 
         # chuncked versions of lists
-        chuncked_ids = utils.chunck_list(ids, batch_size=utils.BATCH_SIZE)
+        chuncked_ids = utils.chunck_list(ids_left, batch_size=utils.BATCH_SIZE)
 
         # show progress of scraping
         progress_text = "Inventaire des articles en cours. "
         text_bar = st.progress(0, progress_text)
 
         # text storage
-        articles_text = []
         progress_ = 0
-        total_unloaded_ids = []
 
         for batch in chuncked_ids:
             text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
             articles_text.append(text_)
             progress_ += (len(batch) - len(unloaded_ids))
-            text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
-            total_unloaded_ids += unloaded_ids
-            time.sleep(5)
+            text_bar.progress(progress_/len(ids_left), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_left)) + ".")
 
-        all_texts = []
-        for text_ in articles_text:
-            for k in text_:
-                all_texts.append(k)
         
-        # unloaded articles
-        ids_string = str()
-        for id in total_unloaded_ids:
-            ids_string += str(id)
-            ids_string += " "
-
+        # text storage
+        st.experimental_set_query_params(my_saved_result=articles_text)
+        st.markdown(len(articles_text))
+        st.markdown(len(ids_left))
+        
         st.success("Première inventaire des articles terminé.")
-        st.warning(str(len(total_unloaded_ids)) + " n'ont pas être chargé(s). Leur identifiant sont : " + ids_string)
 
-        df_articles_description = utils.get_inventory_description(ids=ids, text=all_texts, names=names)
+    st.markdown("---")
 
-        # artciles backup 
-        now = datetime.now()
-        dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
-        df_to_save = utils.to_excel(df_articles_description)
-        st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES",
-                                    data = df_to_save ,
-                                    file_name = 'inventaire_legifrance_' + str(dt_string) + '.xlsx')
-    """
+    st.info("Effectuez la deuxième partie de l'inventaire des articles :", icon="💡")
+    inventaire_regu = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 2/2")
+    
+    # for text storage
+    app_state = st.experimental_get_query_params()  
+
     if inventaire_regu is True:
         # artciles inventory        
         # get ids and names 
@@ -115,7 +115,7 @@ def app():
 
         # cut ids list and names into half
         ids_right = ids[int(len(ids)/2):]
-        names_right = names[int(len(names)/2):]
+        #names_right = names[int(len(names)/2):]
 
         # chuncked versions of lists
         chuncked_ids = utils.chunck_list(ids_right, batch_size=utils.BATCH_SIZE)
@@ -125,33 +125,54 @@ def app():
         text_bar = st.progress(0, progress_text)
 
         # text storage
-        # articles_text = []
         progress_ = 0
-        total_unloaded_ids = []
+        articles_text = app_state["my_saved_result"]
 
         for batch in chuncked_ids:
             text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
             articles_text.append(text_)
             progress_ += (len(batch) - len(unloaded_ids))
             text_bar.progress(progress_/len(ids_right), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_right)) + ".")
-            total_unloaded_ids += unloaded_ids
-            time.sleep(5)
-
-        #all_texts = []
+            
+        st.success("Deuxième inventaire des articles terminé.")
+        
+        # list of all law texts
+        all_texts = []
         for text_ in articles_text:
             for k in text_:
                 all_texts.append(k)
+        
+        # dataframe construction
+        total_unloaded_ids = []
+        st.info("Finalisation de l'inventaire... ")
+        ids, names = utils.get_ids_and_names()
+        for id in range(0, len(all_texts)):
+            if all_texts[id] == "ERREUR DE CHARGEMENT DE L'ARTCILE":
+                total_unloaded_ids.append(ids[id])
         
         # unloaded articles
         ids_string = str()
         for id in total_unloaded_ids:
             ids_string += str(id)
             ids_string += " "
-
         
-        st.success("Deuxième inventaire des articles terminé.")
-        st.warning(str(len(total_unloaded_ids)) + " n'ont pas être chargé(s). Leur identifiant sont : " + ids_string)
-        """
+        st.markdown(len(ids))
+        st.markdown(len(all_texts))
+        st.markdown(len(names))
+
+        st.warning(str(len(total_unloaded_ids)) + " n'ont pas pu être chargé(s). Leurs identifiants sont : " + ids_string)
+        df_articles_description = utils.get_inventory_description(ids=ids, text=all_texts, names=names)
+        st.success("Inventaire terminé.")
+        st.balloons()
+
+        # artciles backup 
+        now = datetime.now()
+        dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
+        df_to_save = utils.to_excel(df_articles_description)
+        st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES",
+                                    data = df_to_save ,
+                                    file_name = 'inventaire_legifrance_' + str(dt_string) + '.xlsx')
+        
 
     #--------#
     # REVIEW PART 
