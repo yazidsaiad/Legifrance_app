@@ -35,30 +35,14 @@ def app():
     #--------#
     # INVENTORY PART 
     #--------#
-    """
-    test = []
-    b1 = st.button('toto')
-    b2 = st.button('tata')
-    if b1 is True:
-        test.append("toto")
-        st.experimental_set_query_params(my_saved_result=test)
-    app_state = st.experimental_get_query_params()  
-    if b2 is True:
-        test = app_state["my_saved_result"]
-        #st.markdown(test)
-        test.append("tata")
-        
-    st.markdown(test)
-    """
-
+    
     st.header("INVENTAIRE DES ARTICLES")
     st.info("Afin d'optimier les ressources mémoires utilisées, l'inventaire des inventaire des articles sur Légifrance \
             doit être effectué en deux parties.", icon="ℹ️")
+    st.markdown("---")
     
     df_articles_description = pd.DataFrame()
     articles_text = []
-
-
     
     st.info("Effectuez la première partie de l'inventaire des articles :", icon="💡")
     inventaire_legi = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 1/2")
@@ -86,15 +70,12 @@ def app():
 
         for batch in chuncked_ids:
             text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
-            articles_text.append(text_)
+            articles_text += text_
             progress_ += (len(batch) - len(unloaded_ids))
             text_bar.progress(progress_/len(ids_left), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_left)) + ".")
 
-        
         # text storage
         st.experimental_set_query_params(my_saved_result=articles_text)
-        st.markdown(len(articles_text))
-        st.markdown(len(ids_left))
         
         st.success("Première inventaire des articles terminé.")
 
@@ -130,38 +111,30 @@ def app():
 
         for batch in chuncked_ids:
             text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
-            articles_text.append(text_)
+            articles_text += text_
             progress_ += (len(batch) - len(unloaded_ids))
             text_bar.progress(progress_/len(ids_right), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_right)) + ".")
             
         st.success("Deuxième inventaire des articles terminé.")
         
-        # list of all law texts
-        all_texts = []
-        for text_ in articles_text:
-            for k in text_:
-                all_texts.append(k)
         
         # dataframe construction
         total_unloaded_ids = []
         st.info("Finalisation de l'inventaire... ")
         ids, names = utils.get_ids_and_names()
-        for id in range(0, len(all_texts)):
-            if all_texts[id] == "ERREUR DE CHARGEMENT DE L'ARTCILE":
+        for id in range(0, len(articles_text)):
+            if articles_text[id] == "ERREUR DE CHARGEMENT DE L'ARTCILE":
                 total_unloaded_ids.append(ids[id])
         
         # unloaded articles
-        ids_string = str()
+        ids_string = []
         for id in total_unloaded_ids:
             ids_string += str(id)
             ids_string += " "
         
-        st.markdown(len(ids))
-        st.markdown(len(all_texts))
-        st.markdown(len(names))
-
-        st.warning(str(len(total_unloaded_ids)) + " n'ont pas pu être chargé(s). Leurs identifiants sont : " + ids_string)
-        df_articles_description = utils.get_inventory_description(ids=ids, text=all_texts, names=names)
+        if len(ids_string) != 0:
+            st.warning( "Articles dont le chargement a échoué : " + ids_string)
+        df_articles_description = utils.get_inventory_description(ids=ids, text=articles_text, names=names)
         st.success("Inventaire terminé.")
         st.balloons()
 
