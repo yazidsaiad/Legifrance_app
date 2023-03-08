@@ -26,7 +26,7 @@ def chunck_list(list_ : list, batch_size : int):
 
     return chuncked_list
 
-# @st.cache_data
+@st.cache_data
 def get_ids_and_names():
 
     """
@@ -73,7 +73,7 @@ def get_ids_and_names():
 
     return IDS, NAMES
 
-# @st.cache_data
+@st.cache_data
 def get_articles(ids : list, timeout : int):
     """
     Allow the legislative and regulatory texts scraping on Légifrance website.
