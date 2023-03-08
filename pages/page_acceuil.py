@@ -37,7 +37,7 @@ def app():
     #--------#
     
     st.header("INVENTAIRE DES ARTICLES")
-    st.info("Afin d'optimier les ressources mémoires utilisées, l'inventaire des inventaire des articles sur Légifrance \
+    st.info("Afin d'optimier les ressources mémoires utilisées, l'opération d'inventaire des articles sur Légifrance \
             doit être effectué en deux parties.", icon="ℹ️")
     st.markdown("---")
     
