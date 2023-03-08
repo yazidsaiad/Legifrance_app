@@ -39,29 +39,31 @@ def app():
 
 
     st.header("INVENTAIRE DES ARTICLES")
-    st.markdown("💡 Téléchargez l'inventaire des articles répertoriés sur Légifrance à cette date.")
+    st.info("Afin d'optimier les ressources mémoires utilisées, l'inventaire des inventaire des articles sur Légifrance \
+            doit être effectué en deux parties.", icon="ℹ️")
+    
     df_articles_description = pd.DataFrame()
     col5, col6 = st.columns(2)
     with col5:
-        inventaire_legi = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES DE LA PARTIE LEGISLATIVE")
+        st.info("Effectuez la première partie de l'inventaire des articles :", icon="💡")
+        inventaire_legi = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 1/2")
     with col6:
-        inventaire_regu = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES DE LA PARTIE REGLEMENTAIRE")
+        st.info("Effectuez la deuxième partie de l'inventaire des articles :", icon="💡")
+        inventaire_regu = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 2/2")
 
     if inventaire_legi is True:
-        # artciles inventory
-        st.info("Cette opération prend un certain temps. Afin d'optimiser le temps de calcul, branchez votre ordinateur sur un secteur et limitez le nombre d'applications ouvertes simultanément.")
-        
+        # artciles inventory        
         # get ids and names 
         st.info("Récupération des identifiants des articles... ")
         ids, names = utils.get_ids_and_names()
         st.success("Récupération des identifiants terminée. ")
 
         # cut ids list and names into half
-        ids_left = ids[:int(len(ids)/2)]
-        names_left = names[:int(len(names)/2)]
+        #ids_left = ids[:int(len(ids)/2)]
+        #names_left = names[:int(len(names)/2)]
 
         # chuncked versions of lists
-        chuncked_ids = utils.chunck_list(ids_left, batch_size=utils.BATCH_SIZE)
+        chuncked_ids = utils.chunck_list(ids, batch_size=utils.BATCH_SIZE)
 
         # show progress of scraping
         progress_text = "Inventaire des articles en cours. "
@@ -70,11 +72,14 @@ def app():
         # text storage
         articles_text = []
         progress_ = 0
+        total_unloaded_ids = []
+
         for batch in chuncked_ids:
             text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
             articles_text.append(text_)
             progress_ += (len(batch) - len(unloaded_ids))
-            text_bar.progress(progress_/len(ids_left), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_left)) + ".")
+            text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
+            total_unloaded_ids += unloaded_ids
             time.sleep(5)
 
         all_texts = []
@@ -84,13 +89,14 @@ def app():
         
         # unloaded articles
         ids_string = str()
-        for id in unloaded_ids:
+        for id in total_unloaded_ids:
             ids_string += str(id)
             ids_string += " "
 
-        df_articles_description = utils.get_inventory_description(ids=ids_left, text=all_texts, names=names_left)
-        st.success("Inventaire des articles terminé.")
-        st.warning(str(len(unloaded_ids)) + " n'ont pas être chargé(s). Leur identifiant sont : " + ids_string)
+        st.success("Première inventaire des articles terminé.")
+        st.warning(str(len(total_unloaded_ids)) + " n'ont pas être chargé(s). Leur identifiant sont : " + ids_string)
+
+        df_articles_description = utils.get_inventory_description(ids=ids, text=all_texts, names=names)
 
         # artciles backup 
         now = datetime.now()
@@ -99,6 +105,53 @@ def app():
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES",
                                     data = df_to_save ,
                                     file_name = 'inventaire_legifrance_' + str(dt_string) + '.xlsx')
+    """
+    if inventaire_regu is True:
+        # artciles inventory        
+        # get ids and names 
+        st.info("Récupération des identifiants des articles... ")
+        ids, names = utils.get_ids_and_names()
+        st.success("Récupération des identifiants terminée. ")
+
+        # cut ids list and names into half
+        ids_right = ids[int(len(ids)/2):]
+        names_right = names[int(len(names)/2):]
+
+        # chuncked versions of lists
+        chuncked_ids = utils.chunck_list(ids_right, batch_size=utils.BATCH_SIZE)
+
+        # show progress of scraping
+        progress_text = "Inventaire des articles en cours. "
+        text_bar = st.progress(0, progress_text)
+
+        # text storage
+        # articles_text = []
+        progress_ = 0
+        total_unloaded_ids = []
+
+        for batch in chuncked_ids:
+            text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
+            articles_text.append(text_)
+            progress_ += (len(batch) - len(unloaded_ids))
+            text_bar.progress(progress_/len(ids_right), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_right)) + ".")
+            total_unloaded_ids += unloaded_ids
+            time.sleep(5)
+
+        #all_texts = []
+        for text_ in articles_text:
+            for k in text_:
+                all_texts.append(k)
+        
+        # unloaded articles
+        ids_string = str()
+        for id in total_unloaded_ids:
+            ids_string += str(id)
+            ids_string += " "
+
+        
+        st.success("Deuxième inventaire des articles terminé.")
+        st.warning(str(len(total_unloaded_ids)) + " n'ont pas être chargé(s). Leur identifiant sont : " + ids_string)
+        """
 
     #--------#
     # REVIEW PART 
