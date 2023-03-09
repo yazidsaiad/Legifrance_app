@@ -5,7 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from io import BytesIO
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
+# from selenium.webdriver.chrome.options import Options
 # from webdriver_manager.chrome import ChromeDriverManager
 import streamlit as st
 
@@ -40,22 +41,30 @@ def get_ids_and_names():
     # IDENTIFIERS AND ARTICLE NAMES STORAGE
     #------#
 
-    
+    """
     options = Options()     # chrome options for the webdrivers
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument('--no-sandbox')     
     options.add_argument('--disable-dev-shm-usage')        
-    
+    """
+    options = Options()     # firefox options for the webdrivers
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument('--no-sandbox')     
+    options.add_argument('--disable-dev-shm-usage')      
+
     
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
     
-    # driver_legi = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    # driver_regl = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    """
+    # with chrome driver 
     driver_legi = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instantiation for legislative part
     driver_regl = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instanciation for regulatory part
-    
+    """
+    driver_legi = webdriver.Firefox(executable_path='geckodriver.exe', options=options)     
+    driver_regl = webdriver.Firefox(executable_path='geckodriver.exe', options=options)
 
     driver_legi.get(url_legi_part)
     ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
@@ -85,7 +94,7 @@ def get_articles(ids : list, timeout : int):
 
     This function returns a dataframe containing the law articles with names and identifiers.
     """
-    options = Options()     # chrome options for the webdrivers
+    options = Options()     # options for the webdrivers
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument('--no-sandbox')     
@@ -108,8 +117,9 @@ def get_articles(ids : list, timeout : int):
     IDS_UNLOADED = []
     
     # webdriver instanciation for each batch
-    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
-    
+    # driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
+    driver = webdriver.Firefox(executable_path='geckodriver.exe', options=options)
+
     for k in range(0, len(ids)):        
         driver.get(LINKS_TO_ARTICLES[k])
         try:
