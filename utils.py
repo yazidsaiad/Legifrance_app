@@ -6,9 +6,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from io import BytesIO
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 # from selenium.webdriver.chrome.options import Options
 # from webdriver_manager.chrome import ChromeDriverManager
 import streamlit as st
+import os
 
 BATCH_SIZE = 100
 TIMEOUT = 5
@@ -50,7 +52,8 @@ def get_ids_and_names():
     """
     options = Options()     # firefox options for the webdrivers
     # options.binary_location = r'C:\Users\ysaiad\AppData\Local\Mozilla Firefox\firefox.exe'
-    options.binary_location = r'/usr/bin/firefox'
+    options.binary_location = os.path.abspath('/usr/bin/firefox')
+    service = Service(executable_path='geckodriver.exe')
 
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
@@ -66,8 +69,8 @@ def get_ids_and_names():
     driver_legi = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instantiation for legislative part
     driver_regl = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instanciation for regulatory part
     """
-    driver_legi = webdriver.Firefox(executable_path='geckodriver.exe', options=options)     
-    driver_regl = webdriver.Firefox(executable_path='geckodriver.exe', options=options)
+    driver_legi = webdriver.Firefox(service=service, options=options)     
+    driver_regl = webdriver.Firefox(service=service, options=options)
 
     driver_legi.get(url_legi_part)
     ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
@@ -99,7 +102,10 @@ def get_articles(ids : list, timeout : int):
     """
     options = Options()     # options for the webdrivers
     # options.binary_location = r'C:\Users\ysaiad\AppData\Local\Mozilla Firefox\firefox.exe'
-    options.binary_location = r'/usr/bin/firefox'
+    # options.binary_location = r'/usr/bin/firefox'
+    options.binary_location = os.path.abspath('/usr/bin/firefox')
+    service = Service(executable_path='geckodriver.exe')
+
 
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
@@ -124,7 +130,7 @@ def get_articles(ids : list, timeout : int):
     
     # webdriver instanciation for each batch
     # driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
-    driver = webdriver.Firefox(executable_path='geckodriver.exe', options=options)
+    driver = webdriver.Firefox(service=service, options=options)
 
     for k in range(0, len(ids)):        
         driver.get(LINKS_TO_ARTICLES[k])
