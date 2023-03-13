@@ -24,10 +24,11 @@ def app():
     st.markdown("---")
 
     st.header("BILAN DES MODIFICATIONS DES ARTICLES")
-    st.markdown("Le bilan des modifications des articles est effectué relativement à deux sauvegardes d'inventaire des articles.")
+    st.info("Le bilan des modifications des articles est effectué relativement à deux sauvegardes d'inventaire des articles.", icon="ℹ️")
+    st.markdown('---')
 
     # load first articles inventory
-    st.markdown("💡 Veuillez charger l'inventaire qui va servir de référentiel au bilan des modifications :")
+    st.info("Veuillez charger l'inventaire qui va servir de référentiel au bilan des modifications :", icon='💡')
     uploaded_file_base = st.file_uploader("Choisissez un fichier")
     df_base_inventaire = pd.DataFrame()
     if uploaded_file_base is not None:
@@ -37,7 +38,7 @@ def app():
 
     # load second articles inventory
     st.markdown(" ")
-    st.markdown("💡 Veuillez charger un nouvel inventaire :")
+    st.info("Veuillez charger un nouvel inventaire :", icon='💡')
     uploaded_file_new = st.file_uploader("Choisissez un nouveau fichier")
     df_new_inventaire = pd.DataFrame()
     if uploaded_file_new is not None:
@@ -117,5 +118,24 @@ def app():
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES ABROGES",
                                     data = df_to_save ,
                                     file_name = 'références_articles_abrogés_' + str(dt_string) + '.xlsx')
+        
+        # revoked articles counted at the date corresponding to the second inventory
+        list_revoked = []       
+        for ref in list(df_new_inventaire['Référence']):
+            if 'abrogé' in ref:
+                list_revoked.append(ref)
+        df_revoked = pd.DataFrame(list_revoked, columns = ['Articles Abrogés'])
+        st.info("⚠️ " + str(len(list_revoked)) + " article(s) abrogé(s) au dernier inventaire :")
+        st.dataframe(df_revoked)
+
+        # new articles revoked articles backup 
+        now = datetime.now()
+        dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
+        df_to_save = utils.to_excel(df_revoked)
+        st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DE TOUS LES ARTICLES ABROGES",
+                                    data = df_to_save ,
+                                    file_name = 'tous_les_articles_abrogés_' + str(dt_string) + '.xlsx')
+        
+
 
         st.success("Bilan terminé.")
