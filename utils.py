@@ -52,7 +52,7 @@ def get_ids_and_names():
     """
     options = Options()     # firefox options for the webdrivers
     # options.binary_location = r'C:\Users\ysaiad\AppData\Local\Mozilla Firefox\firefox.exe'
-    options.binary_location = os.path.abspath('/usr/bin/firefox')
+    options.binary_location = os.environ['FIREFOX_BIN']
     service = Service(executable_path='geckodriver.exe')
 
     options.add_argument("--headless")
@@ -103,7 +103,7 @@ def get_articles(ids : list, timeout : int):
     options = Options()     # options for the webdrivers
     # options.binary_location = r'C:\Users\ysaiad\AppData\Local\Mozilla Firefox\firefox.exe'
     # options.binary_location = r'/usr/bin/firefox'
-    options.binary_location = os.path.abspath('/usr/bin/firefox')
+    options.binary_location = os.environ['FIREFOX_BIN']
     service = Service(executable_path='geckodriver.exe')
 
 
