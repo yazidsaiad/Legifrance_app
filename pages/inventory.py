@@ -127,7 +127,7 @@ def app():
                 total_unloaded_ids.append(ids[id])
         
         # unloaded articles
-        ids_string = []
+        ids_string = " "
         for id in total_unloaded_ids:
             ids_string += str(id)
             ids_string += " "
