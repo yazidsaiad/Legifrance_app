@@ -39,8 +39,8 @@ def app():
     st.header("INVENTAIRE DES ARTICLES")
 
     # message to inform users about memory consumption 
-    st.info("L'opération d'inventaire des articles sur Légifrance peut s'interrompre lors de son exécution \
-            à cause de la consommation des ressources mémoires. Si tel est le cas, veuillez rappuyer sur le bouton d'inventaire.", icon="ℹ️")
+    st.info("Afin d'optimier les ressources mémoires utilisées, l'opération d'inventaire des articles sur Légifrance \
+            doit être effectuée en deux parties.", icon="ℹ️")
     st.markdown("---")
 
     # dataframe for article storage
@@ -48,19 +48,23 @@ def app():
     articles_text = []
 
     # first part of inventory 
-    st.info("Effectuez l'inventaire des articles :", icon="💡")
-    inventaire = st.button("📝 INVENTAIRE DES ARTICLES ")
+    st.info("Effectuez la première partie de l'inventaire des articles :", icon="💡")
+    inventaire_legi = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 1/2")
 
 
-    if inventaire is True:
+    if inventaire_legi is True:
         # artciles inventory        
         # get ids and names 
         st.info("Récupération des identifiants des articles... ")
         ids, names = utils.get_ids_and_names()
         st.success("Récupération des identifiants terminée. ")
 
+        # cut ids list and names into half
+        ids_left = ids[:int(len(ids)/2)]
+        #names_left = names[:int(len(names)/2)]
+
         # chuncked versions of lists
-        chuncked_ids = utils.chunck_list(ids, batch_size=utils.BATCH_SIZE)
+        chuncked_ids = utils.chunck_list(ids_left, batch_size=utils.BATCH_SIZE)
 
         # show progress of scraping
         progress_text = "Inventaire des articles en cours. "
@@ -73,13 +77,55 @@ def app():
             text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
             articles_text += text_
             progress_ += (len(batch) - len(unloaded_ids))
-            text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
+            text_bar.progress(progress_/len(ids_left), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_left)) + ".")
 
+        # text storage
+        st.experimental_set_query_params(my_saved_result=articles_text)
+        st.success("Première inventaire des articles terminé.")
+
+
+    # second part of inventory
+    st.markdown("---")
+    st.info("Effectuez la deuxième partie de l'inventaire des articles :", icon="💡")
+    inventaire_regu = st.button("📝 EFFECTUER L'INVENTAIRE DES ARTICLES 2/2")
+    
+    # for text storage
+    app_state = st.experimental_get_query_params()  
+
+    if inventaire_regu is True:
+        # artciles inventory        
+        # get ids and names 
+        st.info("Récupération des identifiants des articles... ")
+        ids, names = utils.get_ids_and_names()
+        st.success("Récupération des identifiants terminée. ")
+
+        # cut ids list and names into half
+        ids_right = ids[int(len(ids)/2):]
+        #names_right = names[int(len(names)/2):]
+
+        # chuncked versions of lists
+        chuncked_ids = utils.chunck_list(ids_right, batch_size=utils.BATCH_SIZE)
+
+        # show progress of scraping
+        progress_text = "Inventaire des articles en cours. "
+        text_bar = st.progress(0, progress_text)
+
+        # text storage
+        progress_ = 0
+        articles_text = app_state["my_saved_result"]
+
+        for batch in chuncked_ids:
+            text_, unloaded_ids, = utils.get_articles(batch, timeout=utils.TIMEOUT)
+            articles_text += text_
+            progress_ += (len(batch) - len(unloaded_ids))
+            text_bar.progress(progress_/len(ids_right), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids_right)) + ".")
+            
+        st.success("Deuxième inventaire des articles terminé.")
         
-
+        
         # dataframe construction
-        st.info("Finalisation de l'inventaire... ")
         total_unloaded_ids = []
+        st.info("Finalisation de l'inventaire... ")
         ids, names = utils.get_ids_and_names()
         for id in range(0, len(articles_text)):
             if articles_text[id] == "ERREUR DE CHARGEMENT DE L'ARTCILE":
