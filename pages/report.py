@@ -1,3 +1,7 @@
+"""
+This file contains the streamlit code of the project report page.
+"""
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -6,8 +10,15 @@ import utils
 
 
 def app():
+     
+    """
+    This function generates the project features using streamlit library.
+    
+    """
+     
     # display image in the sidebar
-    st.sidebar.image('https://www.patrimoineculturel.com/wp-content/uploads/2020/10/1200px-Logo_SNCF_R%C3%A9seau_2015.svg_.png', width = 250)
+    st.sidebar.image('https://www.patrimoineculturel.com/wp-content/uploads/2020/10/1200px-Logo_SNCF_R%C3%A9seau_2015.svg_.png', 
+                     width = 250)
 
     # display images in separated columns
     col1, col2, col3 = st.columns(3)
@@ -20,15 +31,18 @@ def app():
     
     # display the project title with separators
     st.markdown("---")
-    st.markdown("<h1 style='text-align: center; color: black; font-size : 30px;'>INTERFACE D'AUTOMATISATION DE VEILLE</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: black; font-size : 30px;'>INTERFACE D'AUTOMATISATION DE VEILLE</h1>",
+                unsafe_allow_html=True)
     st.markdown("---")
 
     st.header("BILAN DES MODIFICATIONS DES ARTICLES")
-    st.info("Le bilan des modifications des articles est effectué relativement à deux sauvegardes d'inventaire des articles.", icon="ℹ️")
+    st.info("Le bilan des modifications des articles est effectué relativement à deux sauvegardes d'inventaire des articles.", 
+            icon="ℹ️")
     st.markdown('---')
 
     # load first articles inventory
-    st.info("Veuillez charger l'inventaire qui va servir de référentiel au bilan des modifications :", icon='💡')
+    st.info("Veuillez charger l'inventaire qui va servir de référentiel au bilan des modifications :", 
+            icon='💡')
     uploaded_file_base = st.file_uploader("Choisissez un fichier")
     df_base_inventaire = pd.DataFrame()
     if uploaded_file_base is not None:
@@ -115,7 +129,7 @@ def app():
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
         df_to_save = utils.to_excel(df_abroges)
-        st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES ABROGES",
+        st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES ABROGES ENTRE LES DATES DES DEUX INVENTAIRES",
                                     data = df_to_save ,
                                     file_name = 'références_articles_abrogés_' + str(dt_string) + '.xlsx')
         
@@ -128,11 +142,11 @@ def app():
         st.info("⚠️ " + str(len(list_revoked)) + " article(s) abrogé(s) au dernier inventaire :")
         st.dataframe(df_revoked)
 
-        # new articles revoked articles backup 
+        # revoked articles at the date corresponding to the second inventory backup 
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
         df_to_save = utils.to_excel(df_revoked)
-        st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DE TOUS LES ARTICLES ABROGES",
+        st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DE TOUS LES ARTICLES ABROGES A LA DERNIERE DATE",
                                     data = df_to_save ,
                                     file_name = 'tous_les_articles_abrogés_' + str(dt_string) + '.xlsx')
         
