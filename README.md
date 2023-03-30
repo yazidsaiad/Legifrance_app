@@ -13,7 +13,11 @@ As the data is temporarily stored in the cloud, if the program is interrupted, s
 
 ⚠️ [App Hibernation]
 Community Cloud apps without traffic for 7 consecutive days will automatically go to sleep. 
+
+
 <img src="https://docs.streamlit.io/images/spin_down.png" width="500">
+
+
 To wake the app up, press the "Yes, get this app back up!" button. This can be done by anyone who wants to view the app, not just the app developer!
 
 
