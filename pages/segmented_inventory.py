@@ -17,11 +17,12 @@ def app():
 
     # display image in the sidebar
     st.sidebar.image('https://www.patrimoineculturel.com/wp-content/uploads/2020/10/1200px-Logo_SNCF_R%C3%A9seau_2015.svg_.png', width = 250)
-
     # display images in separated columns
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.image('https://upload.wikimedia.org/wikipedia/fr/e/e7/Logo-legifrance-2020.svg',
+        # st.image('https://upload.wikimedia.org/wikipedia/fr/e/e7/Logo-legifrance-2020.svg',
+        # width = 400)
+        st.image(r'images\Logo-legifrance-2020.svg.png',
         width = 400)
     with col3:
         st.image('https://www.tnpandyou.com/wp-content/uploads/2020/08/TNP-logo_1653x1006.png',
