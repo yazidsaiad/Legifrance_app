@@ -21,7 +21,7 @@ def app():
     # display images in separated columns
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.image('https://www.dila.premier-ministre.gouv.fr/IMG/arton223.png',
+        st.image('images/Logo-legifrance-2020.svg.png',
         width = 400)
     with col3:
         st.image('https://www.tnpandyou.com/wp-content/uploads/2020/08/TNP-logo_1653x1006.png',
