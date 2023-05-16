@@ -4,3 +4,4 @@ pandas==1.5.1
 seleniumbase
 webdriver-manager==3.8.4
 openpyxl==3.0.10
+altair<5 
