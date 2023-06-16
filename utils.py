@@ -9,6 +9,7 @@ from io import BytesIO
 # from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.chrome.options import Options
 # from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 import streamlit as st
 import os
 
@@ -60,17 +61,17 @@ def get_ids_and_names():
     options.add_argument('--no-sandbox')     
     options.add_argument('--disable-dev-shm-usage')      
 
-    
+    service = Service('chromedriver.exe')
+
+
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
     
     
     # with chrome driver 
-    driver_legi = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instantiation for legislative part
-    driver_regl = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instanciation for regulatory part
+    driver_legi = webdriver.Chrome(service=service, options=options)     # webdriver instantiation for legislative part
+    driver_regl = webdriver.Chrome(service=service, options=options)     # webdriver instanciation for regulatory part
     
-    # driver_legi = webdriver.Firefox(service=service, options=options)     
-    # driver_regl = webdriver.Firefox(service=service, options=options)
 
     driver_legi.get(url_legi_part)
     ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
@@ -112,6 +113,8 @@ def get_articles(ids : list, timeout : int):
     options.add_argument('--no-sandbox')     
     options.add_argument('--disable-dev-shm-usage')    
 
+    service = Service('chromedriver.exe')
+
     #------#
     # ARTICLE STORAGE
     #------#
@@ -129,7 +132,7 @@ def get_articles(ids : list, timeout : int):
     IDS_UNLOADED = []
     
     # webdriver instanciation for each batch
-    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
+    driver = webdriver.Chrome(service=service, options=options)
     # driver = webdriver.Firefox(service=service, options=options)
 
     for k in range(0, len(ids)):        
