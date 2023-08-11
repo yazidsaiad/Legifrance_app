@@ -72,8 +72,8 @@ def get_ids_and_names():
     # driver_legi = webdriver.Chrome(service=service, options=options)     # webdriver instantiation for legislative part
     # driver_regl = webdriver.Chrome(service=service, options=options)     # webdriver instanciation for regulatory part
     
-    driver_legi = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instantiation for legislative part
-    driver_regl = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instanciation for regulatory part
+    driver_legi = webdriver.Chrome()     # webdriver instantiation for legislative part
+    driver_regl = webdriver.Chrome()     # webdriver instanciation for regulatory part
     
 
     driver_legi.get(url_legi_part)
