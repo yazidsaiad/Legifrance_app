@@ -61,7 +61,7 @@ def get_ids_and_names():
     options.add_argument('--no-sandbox')     
     options.add_argument('--disable-dev-shm-usage')      
 
-    service = Service('chromedriver.exe')
+    #service = Service('chromedriver.exe')
 
 
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
@@ -69,8 +69,11 @@ def get_ids_and_names():
     
     
     # with chrome driver 
-    driver_legi = webdriver.Chrome(service=service, options=options)     # webdriver instantiation for legislative part
-    driver_regl = webdriver.Chrome(service=service, options=options)     # webdriver instanciation for regulatory part
+    # driver_legi = webdriver.Chrome(service=service, options=options)     # webdriver instantiation for legislative part
+    # driver_regl = webdriver.Chrome(service=service, options=options)     # webdriver instanciation for regulatory part
+    
+    driver_legi = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instantiation for legislative part
+    driver_regl = webdriver.Chrome(executable_path='chromedriver.exe', options=options)     # webdriver instanciation for regulatory part
     
 
     driver_legi.get(url_legi_part)
