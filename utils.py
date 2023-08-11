@@ -72,8 +72,8 @@ def get_ids_and_names():
     # driver_legi = webdriver.Chrome(service=service, options=options)     # webdriver instantiation for legislative part
     # driver_regl = webdriver.Chrome(service=service, options=options)     # webdriver instanciation for regulatory part
     
-    driver_legi = webdriver.Chrome()     # webdriver instantiation for legislative part
-    driver_regl = webdriver.Chrome()     # webdriver instanciation for regulatory part
+    driver_legi = webdriver.Chrome(options=options)     # webdriver instantiation for legislative part
+    driver_regl = webdriver.Chrome(options=options)     # webdriver instanciation for regulatory part
     
 
     driver_legi.get(url_legi_part)
@@ -135,7 +135,7 @@ def get_articles(ids : list, timeout : int):
     IDS_UNLOADED = []
     
     # webdriver instanciation for each batch
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
     # driver = webdriver.Firefox(service=service, options=options)
 
     for k in range(0, len(ids)):        
