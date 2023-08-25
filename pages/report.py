@@ -16,6 +16,7 @@ def app():
     
     """
      
+    #####################################################################################################################################################
     # display image in the sidebar
     st.sidebar.image('https://www.patrimoineculturel.com/wp-content/uploads/2020/10/1200px-Logo_SNCF_R%C3%A9seau_2015.svg_.png', 
                      width = 250)
@@ -39,7 +40,9 @@ def app():
     st.info("Le bilan des modifications des articles est effectué relativement à deux sauvegardes d'inventaire des articles.", 
             icon="ℹ️")
     st.markdown('---')
+    #####################################################################################################################################################
 
+    #####################################################################################################################################################
     # load first articles inventory
     st.info("Veuillez charger l'inventaire qui va servir de référentiel au bilan des modifications :", 
             icon='💡')
@@ -62,10 +65,15 @@ def app():
 
     base_list = list(df_base_inventaire.index)
     new_list = list(df_new_inventaire.index)
-    
+
+    #####################################################################################################################################################
+
+
+    #####################################################################################################################################################
     if st.button("EFFECTUER L'INVENTAIRE DES MODIFICATIONS"):
         st.info("Bilan en cours...")
         
+        #####################################################################################################################################################
         # count modified articles
         list_intersection = utils.intersection(base_list, new_list)
         nb_modif = 0
@@ -80,11 +88,14 @@ def app():
         # modified articles backup
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
-        df_to_save = utils.to_excel(df_new_inventaire.loc[list_id_modif])
+        df_to_save_modified = utils.to_excel(df_new_inventaire.loc[list_id_modif])
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES MODIFIES",
-                                    data = df_to_save ,
+                                    data = df_to_save_modified ,
                                     file_name = 'inventaire_articles_modifiés_' + str(dt_string) + '.xlsx')
+        #####################################################################################################################################################
 
+
+        #####################################################################################################################################################
         # count deleted articles
         list_supp = utils.difference(utils.union(base_list, new_list), new_list)
         st.info("⚠️ " + str(len(list_supp)) + " article(s) supprimé(s) depuis la dernière mise à jour :")
@@ -93,11 +104,14 @@ def app():
         # deleted articles backup 
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
-        df_to_save = utils.to_excel(df_base_inventaire.loc[list_supp])
+        df_to_save_deleted = utils.to_excel(df_base_inventaire.loc[list_supp])
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES SUPPRIMES",
-                                    data = df_to_save ,
+                                    data = df_to_save_deleted ,
                                     file_name = 'inventaire_articles_supprimés_' + str(dt_string) + '.xlsx')
+        #####################################################################################################################################################
 
+
+        #####################################################################################################################################################
         # count new articles
         list_add = utils.difference(utils.union(base_list, new_list), base_list)
         st.info("⚠️ " + str(len(list_add)) + " article(s) ajouté(s) depuis la dernière mise à jour :")
@@ -106,11 +120,14 @@ def app():
         # new artciles backup
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
-        df_to_save = utils.to_excel(df_new_inventaire.loc[list_add])
+        df_to_save_new = utils.to_excel(df_new_inventaire.loc[list_add])
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES AJOUTES",
-                                    data = df_to_save ,
+                                    data = df_to_save_new ,
                                     file_name = 'inventaire_articles_ajoutés_' + str(dt_string) + '.xlsx')
+        #####################################################################################################################################################
 
+
+        #####################################################################################################################################################
         # count revoked articles 
         list_abroges_new = []       
         for ref in list(df_new_inventaire['Référence']):
@@ -128,11 +145,14 @@ def app():
         # revoked articles backup 
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
-        df_to_save = utils.to_excel(df_abroges)
+        df_to_save_revoked = utils.to_excel(df_abroges)
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES ABROGES ENTRE LES DATES DES DEUX INVENTAIRES",
-                                    data = df_to_save ,
+                                    data = df_to_save_revoked ,
                                     file_name = 'références_articles_abrogés_' + str(dt_string) + '.xlsx')
-        
+        #####################################################################################################################################################
+
+
+        #####################################################################################################################################################
         # revoked articles counted at the date corresponding to the second inventory
         list_revoked = []       
         for ref in list(df_new_inventaire['Référence']):
@@ -145,11 +165,11 @@ def app():
         # revoked articles at the date corresponding to the second inventory backup 
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%Hh%Mmin%Ss")
-        df_to_save = utils.to_excel(df_revoked)
+        df_to_save_revoked_all = utils.to_excel(df_revoked)
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DE TOUS LES ARTICLES ABROGES A LA DERNIERE DATE",
-                                    data = df_to_save ,
+                                    data = df_to_save_revoked_all ,
                                     file_name = 'tous_les_articles_abrogés_' + str(dt_string) + '.xlsx')
-        
+        #####################################################################################################################################################
 
 
         st.success("Bilan terminé.")

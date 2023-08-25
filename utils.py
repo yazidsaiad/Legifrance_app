@@ -32,7 +32,6 @@ def chunck_list(list_ : list, batch_size : int):
 
 @st.cache_data
 def get_ids_and_names():
-
     """
     Allow the legislative and regulatory texts scraping on Légifrance website.
 
@@ -40,42 +39,19 @@ def get_ids_and_names():
 
     This function returns two lists containing the law articles names and identifiers.
     """
-    #------#
-    # IDENTIFIERS AND ARTICLE NAMES STORAGE
-    #------#
 
-    
     options = Options()     # chrome options for the webdrivers
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument('--no-sandbox')     
     options.add_argument('--disable-dev-shm-usage')        
     
-    # options = Options()     # firefox options for the webdrivers
-    # options.binary_location = r'C:\Users\ysaiad\AppData\Local\Mozilla Firefox\firefox.exe'
-    # options.binary_location = os.environ['FIREFOX_BIN']
-    # service = Service(executable_path='geckodriver.exe')
-
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-    options.add_argument('--no-sandbox')     
-    options.add_argument('--disable-dev-shm-usage')      
-
-    #service = Service('chromedriver.exe')
-
-
     url_legi_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006132338/#LEGISCTA000006132338'     # URL of legislative part
     url_regu_part = 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000018488235/#LEGISCTA000018532924'     # URL of regulatory part
-    
-    
-    # with chrome driver 
-    # driver_legi = webdriver.Chrome(service=service, options=options)     # webdriver instantiation for legislative part
-    # driver_regl = webdriver.Chrome(service=service, options=options)     # webdriver instanciation for regulatory part
     
     driver_legi = webdriver.Chrome(options=options)     # webdriver instantiation for legislative part
     driver_regl = webdriver.Chrome(options=options)     # webdriver instanciation for regulatory part
     
-
     driver_legi.get(url_legi_part)
     ARTICLES = driver_legi.find_elements(By.CLASS_NAME, "name-article")     # store all articles information of legislative part in ARTICLES variable
 
@@ -105,27 +81,18 @@ def get_articles(ids : list, timeout : int):
     This function returns a dataframe containing the law articles with names and identifiers.
     """
     options = Options()     # options for the webdrivers
-    # options.binary_location = r'C:\Users\ysaiad\AppData\Local\Mozilla Firefox\firefox.exe'
-    # options.binary_location = r'/usr/bin/firefox'
-    # options.binary_location = os.environ['FIREFOX_BIN']
-    # service = Service(executable_path='geckodriver.exe')
-
-
+    
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument('--no-sandbox')     
     options.add_argument('--disable-dev-shm-usage')    
 
-    service = Service('chromedriver.exe')
-
-    #------#
-    # ARTICLE STORAGE
-    #------#
-
     ARTICLES_IDS = ids
 
     LINKS_TO_ARTICLES = []      # variable for all web links 
+
     BASE_LINK = 'https://www.legifrance.gouv.fr/codes/article_lc/'      # basic link contained by all links to articles
+
     for id in ARTICLES_IDS:
         link = BASE_LINK + str(id)
         LINKS_TO_ARTICLES.append(link)      # article links storage
@@ -136,10 +103,10 @@ def get_articles(ids : list, timeout : int):
     
     # webdriver instanciation for each batch
     driver = webdriver.Chrome(options=options)
-    # driver = webdriver.Firefox(service=service, options=options)
 
     for k in range(0, len(ids)):        
         driver.get(LINKS_TO_ARTICLES[k])
+
         try:
             # presence of element is detected after the web page loads
             element_present = EC.presence_of_element_located((By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content'))
@@ -147,7 +114,7 @@ def get_articles(ids : list, timeout : int):
             # article content storage  : one web page per article
             ARTICLE = driver.find_element(By.CSS_SELECTOR, '#main > div > div.main-col > div.page-content.folding-element > article > div > div.content')
             ARTICLES_TEXT.append(ARTICLE.text)
-            # print("ARTICLE " + str(ARTICLES_IDS[k])+ " STORED")
+
         except TimeoutException:
             # error printed if web page doesnt load
             print("⚠️ Timed out waiting for page to load")
@@ -156,6 +123,7 @@ def get_articles(ids : list, timeout : int):
             print("❗️ NOMBRE D'ARTICLES NON CHARGES : " + str(counter))
             IDS_UNLOADED.append(ARTICLES_IDS[k])
             ARTICLES_TEXT.append("ERREUR DE CHARGEMENT DE L'ARTCILE")
+
     driver.close()
     
     return ARTICLES_TEXT, IDS_UNLOADED
@@ -221,7 +189,11 @@ def difference(lst1, lst2):
     lst_diff = [x for x in lst1 if x not in s]
     return lst_diff
 
+
 def detect_modification(df_old : pd.DataFrame, df_new : pd.DataFrame):
+    """
+    This function detects modifications between two dataframes passed in arguments.
+    """
     df_old_ = df_old.set_index('Identifiant')
     df_new_ = df_new.set_index('Identifiant')
     old_list = list(df_old_.index)       # list of ids in old inventory

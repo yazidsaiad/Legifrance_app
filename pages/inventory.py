@@ -14,7 +14,8 @@ def app():
     This function generates the project features using streamlit library.
     
     """
-
+    #####################################################################################################################################################
+    # HEADER DEFINITION
     # display image in the sidebar
     st.sidebar.image('https://www.patrimoineculturel.com/wp-content/uploads/2020/10/1200px-Logo_SNCF_R%C3%A9seau_2015.svg_.png', width = 250)
 
@@ -32,6 +33,11 @@ def app():
     st.markdown("<h1 style='text-align: center; color: black; font-size : 30px;'>INTERFACE D'AUTOMATISATION DE VEILLE</h1>", unsafe_allow_html=True)
     st.markdown("---")
 
+    #####################################################################################################################################################
+
+
+
+    #####################################################################################################################################################
     #-----------#
     # INVENTORY # 
     #-----------#
@@ -76,7 +82,6 @@ def app():
             text_bar.progress(progress_/len(ids), text=progress_text + str(progress_) + " Articles chargés sur " + str(len(ids)) + ".")
 
         
-
         # dataframe construction
         st.info("Finalisation de l'inventaire... ")
         total_unloaded_ids = []
@@ -106,6 +111,7 @@ def app():
         st.download_button(label = "📥 TELECHARGER L'INVENTAIRE DES ARTICLES",
                                     data = df_to_save ,
                                     file_name = 'inventaire_legifrance_' + str(dt_string) + '.xlsx')
+        
         
 
    
