@@ -13,7 +13,7 @@ from selenium.webdriver.chrome.service import Service
 import streamlit as st
 import os
 
-BATCH_SIZE = 100
+BATCH_SIZE = 10
 TIMEOUT = 5
 
 def chunck_list(list_ : list, batch_size : int):
